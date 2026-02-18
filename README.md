@@ -4,23 +4,7 @@
 <p align="center">
     <em>Open source Datadog alternative for logs, metrics, traces, and frontend monitoring. Modern observability platform: 10x easier, 140x lower storage cost, high performance, petabyte scale.</em>
 </p>
-<p align="center">
-<a href="https://github.com/openobserve/openobserve" target="_blank">
-    <img src="https://img.shields.io/github/last-commit/openobserve/openobserve" alt="Last Commit">
-</a>
-<a href="https://github.com/openobserve/openobserve/stargazers" target="_blank">
-    <img src="https://img.shields.io/github/stars/openobserve/openobserve" alt="GitHub Stars">
-</a>
-<a href="https://github.com/openobserve/openobserve/issues" target="_blank">
-    <img src="https://img.shields.io/github/issues/openobserve/openobserve" alt="GitHub Issues">
-</a>
-<a href="https://github.com/openobserve/openobserve/graphs/contributors" target="_blank">
-    <img src="https://img.shields.io/github/contributors/openobserve/openobserve" alt="Contributors">
-</a>
-<a href="https://github.com/openobserve/openobserve/releases" target="_blank">
-    <img src="https://img.shields.io/github/v/release/openobserve/openobserve" alt="GitHub Release">
-</a>
-</p>
+
 
 OpenObserve (O2) is a cloud-native observability tool built for logs, metrics, traces, analytics, and Real User Monitoring (RUM). It's designed as a cost-effective alternative to Datadog, Splunk, and Elasticsearch for teams that need full observability without the complexity or cost.
 
