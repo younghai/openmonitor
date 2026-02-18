@@ -263,49 +263,6 @@ For more details:
 - [Open Source LICENSE](https://github.com/openobserve/openobserve/blob/main/LICENSE)
 - [Why AGPL and why it's good for the community](https://openobserve.ai/blog/what-are-apache-gpl-and-agpl-licenses-and-why-openobserve-moved-from-apache-to-agpl/)
 
-## 💼 Enterprise Support
-
-OpenObserve is built as a true open source project, and we're committed to the community. **The open source version is feature-complete and production-ready** - it includes logs, metrics, traces, dashboards, alerts, pipelines, and everything you need to run observability at scale. It will always remain actively maintained and free to use without restrictions.
-
-### Enterprise Edition
-
-For organizations requiring enterprise-grade features and support, we offer an Enterprise edition with:
-
-**Enterprise Features:**
-- **Single Sign-On (SSO)**: OIDC, OAuth, SAML 2.0, LDAP/AD, and integration with major identity providers (Okta, Azure Entra, Google, GitHub, GitLab, Keycloak)
-- **Advanced RBAC**: Granular role-based access control with custom roles and permissions - [Learn more →](https://openobserve.ai/docs/user-guide/identity-and-access-management/role-based-access-control/)
-- **Audit trails**: Comprehensive immutable audit logs with configurable retention
-- **Federated search**: Query across multiple clusters and regions with Super Cluster
-- **Sensitive Data Redaction (SDR)**: Automatically redact PII and sensitive data during ingestion and queries
-- **Advanced encryption**: AES-256 SIV cipher keys with Google Tink KeySet and Akeyless integration
-- **Query management**: Control query resource usage and priorities
-- **Workload management (QoS)**: Quality of Service controls for multi-tenant environments
-
-**Enterprise Support & SLAs:**
-- Dedicated support with contractual SLA guarantees
-- Priority response times for critical issues
-- Technical account management
-- Architecture review and deployment assistance
-- Migration support from existing tools
-- Training and onboarding programs
-
-**Pricing:**
-- **Free tier**: Up to 200 GB/day of ingestion (roughly 6 TB/month), including full commercial use
-- *Registration required at 100 GB/day*
-- Volume discounts and multi-year contracts available
-- [View complete feature comparison →](https://openobserve.ai/downloads/)
-
-For enterprise inquiries and custom deployments, contact our sales team.
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Whether you're fixing bugs, adding features, improving documentation, or sharing feedback, your help makes OpenObserve better for everyone.
-
-To get started, please read our [Contributing Guide](CONTRIBUTING.md) which covers:
-- How to set up your development environment
-- Code standards and best practices
-- How to submit pull requests
-- Reporting bugs and requesting features
 
 
 ## ❓ FAQ
