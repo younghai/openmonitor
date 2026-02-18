@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.openobserve.cluster";
+option java_outer_classname = "eventProto";
+
+package cluster;
+
+import "cluster/common.proto";
+
+service Event {
+    rpc SendFileList (FileList) returns (EmptyResponse) {}
+    rpc GetFiles (SimpleFileList) returns (stream FileContentResponse) {}
+}
+
+message FileContentResponse {
+    repeated FileContent entries = 1;
+}
+
+message FileContent {
+    bytes  content  = 1;  // The actual parquet file content
+    string filename = 2;  // The name of the file
+}

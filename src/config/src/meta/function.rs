@@ -1,0 +1,329 @@
+// Copyright 2026 OpenObserve Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+use once_cell::sync::Lazy;
+use regex::Regex;
+use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
+use vrl::{
+    compiler::{CompileConfig, Program, TimeZone, VrlRuntime},
+    prelude::Function,
+};
+
+use crate::{meta::stream::StreamType, stats::MemorySize, utils::json};
+
+// Checks for #ResultArray#
+pub static RESULT_ARRAY: Lazy<Regex> =
+    Lazy::new(|| Regex::new(r"^#[ \s]*Result[ \s]*Array[ \s]*#").unwrap());
+
+// Checks for #ResultArray#SkipVRL#
+pub static RESULT_ARRAY_SKIP_VRL: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"^#[ \s]*Result[ \s]*Array[ \s]*#[ \s]*Skip[ \s]*VRL[ \s]*#").unwrap()
+});
+
+#[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct Transform {
+    pub function: String,
+    #[serde(default)]
+    pub name: String,
+    #[serde(default)]
+    pub params: String,
+    #[serde(default)]
+    pub num_args: u8,
+    #[serde(default = "default_trans_type")]
+    pub trans_type: Option<u8>, // 0=vrl 1=js
+    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub streams: Option<Vec<StreamOrder>>,
+}
+
+impl MemorySize for Transform {
+    fn mem_size(&self) -> usize {
+        std::mem::size_of::<Transform>()
+            + self.function.mem_size()
+            + self.name.mem_size()
+            + self.params.mem_size()
+            + self.streams.mem_size()
+    }
+}
+
+impl Transform {
+    pub fn is_vrl(&self) -> bool {
+        self.trans_type == Some(0)
+    }
+
+    pub fn is_js(&self) -> bool {
+        self.trans_type == Some(1)
+    }
+
+    pub fn is_result_array_vrl(&self) -> bool {
+        self.is_vrl()
+            && RESULT_ARRAY.is_match(&self.function)
+            && !RESULT_ARRAY_SKIP_VRL.is_match(&self.function)
+    }
+    pub fn is_result_array_skip_vrl(&self) -> bool {
+        self.is_vrl() && RESULT_ARRAY_SKIP_VRL.is_match(&self.function)
+    }
+    pub fn is_result_array_js(&self) -> bool {
+        self.is_js() && RESULT_ARRAY.is_match(&self.function)
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
+pub struct TestVRLRequest {
+    pub function: String,         // Transform function as a string (VRL or JS)
+    pub events: Vec<json::Value>, // List of events (JSON objects)
+    #[serde(default)]
+    pub trans_type: Option<u8>, // Optional: 0=vrl, 1=js. Auto-detected if not provided
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
+pub struct TestVRLResponse {
+    pub results: Vec<VRLResult>, // Transformed events
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
+pub struct VRLResult {
+    pub message: String,
+    pub event: json::Value,
+}
+
+impl VRLResult {
+    pub fn new(message: &str, event: json::Value) -> Self {
+        Self {
+            message: message.to_string(),
+            event,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct StreamOrder {
+    #[serde(default)]
+    pub stream: String,
+    #[serde(default)]
+    pub order: u8,
+    #[serde(default)]
+    pub stream_type: StreamType,
+    #[serde(default)]
+    pub is_removed: bool,
+    #[serde(default)]
+    pub apply_before_flattening: bool,
+}
+
+impl MemorySize for StreamOrder {
+    fn mem_size(&self) -> usize {
+        std::mem::size_of::<StreamOrder>() + self.stream.mem_size()
+    }
+}
+
+impl PartialEq for Transform {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name && self.function == other.function && self.params == other.params
+    }
+}
+#[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
+pub struct ZoFunction<'a> {
+    pub name: &'a str,
+    pub text: &'a str,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
+pub struct FunctionList {
+    pub list: Vec<Transform>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct VRLConfig {
+    pub runtime: VrlRuntime,
+    pub timezone: TimeZone,
+}
+
+fn default_trans_type() -> Option<u8> {
+    Some(0)
+}
+
+pub struct VRLCompilerConfig {
+    pub config: CompileConfig,
+    pub functions: Vec<Box<dyn Function>>,
+}
+
+pub struct VRLRuntimeConfig {
+    pub config: CompileConfig,
+    pub program: Program,
+    pub fields: Vec<String>,
+}
+
+#[derive(Clone, Debug)]
+pub struct VRLResultResolver {
+    pub program: Program,
+    pub fields: Vec<String>,
+}
+
+impl MemorySize for VRLResultResolver {
+    fn mem_size(&self) -> usize {
+        std::mem::size_of::<VRLResultResolver>() + self.fields.mem_size()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::utils::json;
+
+    #[test]
+    fn test_functions() {
+        let trans = Transform {
+            function: "row.concatenated = row.a + row.b;".to_string(),
+            name: "jsconcat".to_string(),
+            trans_type: Some(1), // JS function
+            params: "row".to_string(),
+            num_args: 1,
+            streams: Some(vec![StreamOrder {
+                stream: "test".to_string(),
+                order: 1,
+                stream_type: StreamType::Logs,
+                is_removed: false,
+                apply_before_flattening: false,
+            }]),
+        };
+
+        let mod_trans = Transform {
+            function: "row.concatenated = row.a + row.b;".to_string(),
+            name: "jsconcat".to_string(),
+            trans_type: Some(1), // JS function
+            params: "row".to_string(),
+            num_args: 1,
+            streams: None,
+        };
+        assert_eq!(trans, mod_trans);
+
+        let trans_str = json::to_string(&trans).unwrap();
+        let trans2: Transform = json::from_str(&trans_str).unwrap();
+        assert_eq!(format!("{:?}", trans), format!("{:?}", trans2));
+
+        let trans_list = FunctionList {
+            list: vec![trans, trans2],
+        };
+        assert!(!trans_list.list.is_empty());
+        let trans_list_str = json::to_string(&trans_list.clone()).unwrap();
+        let trans_list2: FunctionList = json::from_str(&trans_list_str).unwrap();
+        assert_eq!(trans_list.list.len(), trans_list2.list.len());
+    }
+
+    #[test]
+    fn test_zo_function() {
+        let f1 = ZoFunction {
+            name: "test",
+            text: "test",
+        };
+        let f1_str = json::to_string(&f1).unwrap();
+        let f2: ZoFunction = json::from_str(&f1_str).unwrap();
+        assert_eq!(f1.name, f2.name);
+        assert_eq!(format!("{:?}", f1), format!("{:?}", f2));
+    }
+
+    #[test]
+    fn test_transform_is_vrl() {
+        let vrl_trans = Transform {
+            function: ". = {}".to_string(),
+            name: "test".to_string(),
+            params: "row".to_string(),
+            num_args: 1,
+            trans_type: Some(0), // VRL
+            streams: None,
+        };
+        assert!(vrl_trans.is_vrl());
+
+        let js_trans = Transform {
+            function: "function test() end".to_string(),
+            name: "test".to_string(),
+            params: "row".to_string(),
+            num_args: 1,
+            trans_type: Some(1), // JavaScript
+            streams: None,
+        };
+        assert!(!js_trans.is_vrl());
+    }
+
+    #[test]
+    fn test_transform_is_result_array_vrl() {
+        let result_array_trans = Transform {
+            function: "#ResultArray#\n. = {}".to_string(),
+            name: "test".to_string(),
+            params: "row".to_string(),
+            num_args: 1,
+            trans_type: Some(0),
+            streams: None,
+        };
+        assert!(result_array_trans.is_result_array_vrl());
+
+        let normal_vrl = Transform {
+            function: ". = {}".to_string(),
+            name: "test".to_string(),
+            params: "row".to_string(),
+            num_args: 1,
+            trans_type: Some(0),
+            streams: None,
+        };
+        assert!(!normal_vrl.is_result_array_vrl());
+    }
+
+    #[test]
+    fn test_transform_is_result_array_skip_vrl() {
+        let skip_vrl_trans = Transform {
+            function: "#ResultArray#SkipVRL#\n. = {}".to_string(),
+            name: "test".to_string(),
+            params: "row".to_string(),
+            num_args: 1,
+            trans_type: Some(0),
+            streams: None,
+        };
+        assert!(skip_vrl_trans.is_result_array_skip_vrl());
+
+        let result_array_trans = Transform {
+            function: "#ResultArray#\n. = {}".to_string(),
+            name: "test".to_string(),
+            params: "row".to_string(),
+            num_args: 1,
+            trans_type: Some(0),
+            streams: None,
+        };
+        assert!(!result_array_trans.is_result_array_skip_vrl());
+    }
+
+    #[test]
+    fn test_vrl_result_new() {
+        let event = json::json!({"key": "value"});
+        let result = VRLResult::new("success", event.clone());
+        assert_eq!(result.message, "success");
+        assert_eq!(result.event, event);
+    }
+
+    #[test]
+    fn test_default_trans_type() {
+        let trans = Transform {
+            function: ". = {}".to_string(),
+            name: "test".to_string(),
+            params: "row".to_string(),
+            num_args: 1,
+            trans_type: default_trans_type(),
+            streams: None,
+        };
+        assert_eq!(trans.trans_type, Some(0));
+    }
+}

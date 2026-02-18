@@ -1,0 +1,47 @@
+// Copyright 2026 OpenObserve Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
+
+use crate::stats::MemorySize;
+
+#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize, ToSchema)]
+#[serde(default)]
+pub struct Folder {
+    pub folder_id: String,
+    pub name: String,
+    pub description: String,
+}
+
+impl MemorySize for Folder {
+    fn mem_size(&self) -> usize {
+        std::mem::size_of::<Folder>()
+            + self.folder_id.mem_size()
+            + self.name.mem_size()
+            + self.description.mem_size()
+    }
+}
+
+/// Indicates the type of data that the folder can contain.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Default, PartialEq, Eq, ToSchema)]
+pub enum FolderType {
+    #[default]
+    Dashboards,
+    Alerts,
+    Reports,
+}
+
+pub const DEFAULT_FOLDER: &str = "default";

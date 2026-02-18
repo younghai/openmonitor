@@ -1,0 +1,135 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.openobserve.cluster";
+option java_outer_classname = "planProto";
+
+package cluster;
+
+import "datafusion_common/datafusion_common.proto";
+import "datafusion/datafusion.proto";
+import "cluster/common.proto";
+import "cluster/search.proto";
+
+message PhysicalPlanNode {
+  oneof plan {
+    NewEmptyExecNode          empty_exec = 1;
+    AggregateTopkExecNode aggregate_topk = 2;
+    StreamingAggsExecNode streaming_aggs = 3;
+    TmpExecNode                 tmp_exec = 4;
+    EnrichmentExecNode    enrichment_exec = 5;
+  }
+}
+
+message Uint64List {
+    repeated uint64 values = 1;
+}
+
+message NewEmptyExecNode {
+    string                                 name = 1;
+    datafusion_common.Schema             schema = 2;
+    optional Uint64List              projection = 3;
+    repeated datafusion.LogicalExprNode filters = 4;
+    optional uint64                       limit = 5;
+    bool                         sorted_by_time = 6;
+    datafusion_common.Schema        full_schema = 7;
+}
+
+message TmpExecNode {
+  string                   trace_id = 1;
+  string                    cluster = 2;
+  string                       path = 3;
+  optional bytes               data = 4;
+  datafusion_common.Schema   schema = 5;
+}
+
+message EnrichmentExecNode {
+  string                   trace_id = 1;
+  string                     org_id = 2;
+  string                stream_name = 3;
+  datafusion_common.Schema   schema = 4;
+}
+
+message AggregateTopkExecNode {
+  string  sort_field = 1;
+  bool    descending = 2;
+  uint64       limit = 3;
+}
+
+message StreamingAggsExecNode {
+  string                                  id = 1;
+  int64                           start_time = 2;
+  int64                             end_time = 3;
+  uint64                   target_partitions = 4;
+  bool                 is_complete_cache_hit = 5;
+  repeated string               cached_files = 6;
+  datafusion.PhysicalPlanNode aggregate_plan = 7;
+  bool                        overwrite_cache = 8;
+}
+
+// Search request
+message FlightSearchRequest {
+    QueryIdentifier         query_identifier = 1;
+    SearchInfo                   search_info = 2;
+    IndexInfo                     index_info = 3;
+    SuperClusterInfo      super_cluster_info = 4;
+}
+
+message QueryIdentifier {
+    string                       trace_id = 1;
+    string                         org_id = 2;
+    string                    stream_type = 3;
+    uint32                      partition = 4; // the partition number of the remote scan
+    string                         job_id = 5; // the unique id for each remote scan
+    bool                      enrich_mode = 6; // need special logic for loading enrich table
+}
+
+message SearchInfo {
+    bytes                            plan = 1;
+    repeated int64           file_id_list = 2;
+    int64                      start_time = 4;
+    int64                        end_time = 5;
+    int64                         timeout = 6;
+    bool                        use_cache = 7;
+    int64              histogram_interval = 8;
+    bool                       is_analyze = 9;
+    optional SamplingConfig sampling_config = 10;
+    bool                      clear_cache = 11;
+}
+
+message IndexInfo {
+    repeated KvItem                equal_keys = 3;
+    IdxOptimizeMode       index_optimize_mode = 5;
+}
+
+message SuperClusterInfo {
+    bool                 is_super_cluster = 1;
+    optional string               user_id = 2;
+    optional string            work_group = 3;
+    optional string     search_event_type = 4; // use for super cluster
+    optional bool              local_mode = 5; // use for super cluster
+}
+
+message IdxOptimizeMode {
+  oneof mode {
+    SimpleTopN      simple_topn       = 4;
+    SimpleDistinct  simple_distinct   = 5;
+  }
+}
+
+message SimpleTopN {
+  string field = 1;
+  uint32 limit = 2;
+  bool     asc = 3;
+}
+
+message SimpleDistinct {
+  string field = 1;
+  uint32 limit = 2;
+  bool     asc = 3;
+}
+
+message KvItem {
+    string   key = 1;
+    string value = 2;
+}

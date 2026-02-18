@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.openobserve.cluster";
+option java_outer_classname = "ingestProto";
+
+package cluster;
+
+import "cluster/common.proto";
+
+service Ingest {
+    rpc Ingest (IngestionRequest) returns (IngestionResponse) {}
+}
+
+message IngestionData {
+    bytes data = 1;
+}
+
+message IngestionRequest {
+    string                           org_id = 1;
+    string                      stream_type = 2;
+    string                      stream_name = 3;
+    IngestionData                      data = 4;
+    optional IngestionType   ingestion_type = 5;
+    optional IngestRequestMetadata metadata = 6;
+}
+
+enum IngestionType {
+    JSON      = 0;
+    MULTI     = 1;
+    GCP       = 2;
+    KINESISFH = 3;
+    RUM       = 4;
+    USAGE     = 5;
+}
+
+message IngestRequestMetadata {
+    map<string, string> data = 1;
+}
+
+message IngestionResponse {
+    int32 status_code = 1;
+    string    message = 2;    
+}
