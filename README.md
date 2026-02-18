@@ -307,32 +307,6 @@ To get started, please read our [Contributing Guide](CONTRIBUTING.md) which cove
 - How to submit pull requests
 - Reporting bugs and requesting features
 
-## 🌍 Community
-
-The best way to get help, share ideas, and connect with other OpenObserve users is through our community channels. We're a friendly group of developers, operators, and observability enthusiasts.
-
-### 🔗 Join us on Slack
-
-[![Slack](./screenshots/slack.png)](https://short.openobserve.ai/community)
-
-Our Slack community is the most active place for:
-- Getting help with installation and configuration
-- Sharing best practices and use cases
-- Discussing feature requests and roadmap
-- Connecting with the core team and other users
-
-[Join the conversation →](https://short.openobserve.ai/community)
-
-### 📱 Join OpenObserve community on WeChat
-
-<img src="./screenshots/wechat_qr.jpg" width="300">
-
-
-### Other ways to connect
-
-- 💬 [GitHub Discussions](https://github.com/openobserve/openobserve/discussions) - For longer-form discussions and Q&A
-- 🐛 [GitHub Issues](https://github.com/openobserve/openobserve/issues) - Report bugs or request features
-- 📖 [Documentation](https://openobserve.ai/docs) - Guides, tutorials, and API references
 
 ## ❓ FAQ
 
