@@ -26,10 +26,6 @@ Cost Comparison: OpenObserve Vs Elasticsearch
   ![OpenObserve Vs Elasticsearch](./screenshots/zo_vs_es.png)
 
 
-## 🎥 Introduction Video
-
-[![OpenObserve Introduction](./screenshots/o2_intro.webp)](https://www.youtube.com/watch?v=4VwuC1tpRP4)
-
 ## 🏗️ Architecture
 
 OpenObserve achieves 140x lower storage costs and high performance through its modern architecture:
