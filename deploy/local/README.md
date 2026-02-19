@@ -18,6 +18,10 @@ IMAGE_NAME=younghai/openmonitor IMAGE_TAG=v0.1.0 ./deploy/local/docker-build-amd
 ## 2) Run container
 
 Credentials are required on first startup.
+By default this also bootstraps:
+- Dummy ingest data (logs/metrics/pipelines/streams/report-runs)
+- Dashboard import JSON
+- Report definitions JSON
 
 ```bash
 cd /Users/young/Downloads/personal_project/observe/openobserve
@@ -30,6 +34,12 @@ Optional overrides:
 
 ```bash
 HOST_PORT=5080 CONTAINER_NAME=openmonitor DATA_DIR="$PWD/data/openmonitor" ./deploy/local/docker-run.sh
+```
+
+Disable auto bootstrap:
+
+```bash
+AUTO_BOOTSTRAP_DUMMY=false ./deploy/local/docker-run.sh
 ```
 
 ## 3) Health check
@@ -49,3 +59,4 @@ cd /Users/young/Downloads/personal_project/observe/openobserve
 - `deploy/build/Dockerfile.tag.amd64` is used by default (release-prod profile).
 - `.dockerignore` is configured to reduce build context and exclude local secrets/artifacts.
 - For Kubernetes, keep using secret-based auth env injection (`openobserve-auth`).
+- Demo bootstrap files are in `deploy/local/bootstrap`.

@@ -35,6 +35,11 @@ flamegraph.html
 npm-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+/deploy/local/bootstrap/data/logs_menu_dummy.json
+/deploy/local/bootstrap/data/pipelines_menu_dummy.json
+/deploy/local/bootstrap/data/streams_menu_dummy.json
+/deploy/local/bootstrap/data/reports_menu_dummy.json
+/deploy/local/bootstrap/data/metrics_menu_dummy.json
 
 CLAUDE.md
 /tests/ui-testing/test-logs

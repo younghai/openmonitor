@@ -1,0 +1,52 @@
+[
+  {
+    "name": "ops-overview-hourly",
+    "title": "Ops Overview Hourly",
+    "description": "Auto-seeded hourly operations snapshot",
+    "tab": "logs",
+    "period": "30m",
+    "frequency": {
+      "type": "hours",
+      "interval": 1,
+      "cron": ""
+    },
+    "enabled": true,
+    "destinations": [
+      {
+        "email": "__REPORT_RECIPIENT__"
+      }
+    ]
+  },
+  {
+    "name": "pipeline-health-daily",
+    "title": "Pipeline Health Daily",
+    "description": "Auto-seeded daily pipeline status report",
+    "tab": "pipelines",
+    "period": "1d",
+    "frequency": {
+      "type": "days",
+      "interval": 1,
+      "cron": ""
+    },
+    "enabled": true,
+    "destinations": [
+      {
+        "email": "__REPORT_RECIPIENT__"
+      }
+    ]
+  },
+  {
+    "name": "reports-overview-cached",
+    "title": "Reports Overview Cached",
+    "description": "Auto-seeded cached report entry for demo",
+    "tab": "reports",
+    "period": "1w",
+    "frequency": {
+      "type": "weeks",
+      "interval": 1,
+      "cron": ""
+    },
+    "enabled": true,
+    "destinations": []
+  }
+]

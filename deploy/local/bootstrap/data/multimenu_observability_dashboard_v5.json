@@ -1,0 +1,722 @@
+{
+  "version": 5,
+  "dashboardId": "multimenu-observability-dashboard-v5",
+  "title": "Multi-Menu Observability Dashboard",
+  "description": "Logs, Metrics, Pipelines, Streams, and Reports demo dashboard with dummy data",
+  "role": "",
+  "owner": "",
+  "tabs": [
+    {
+      "tabId": "logs",
+      "name": "Logs",
+      "panels": [
+        {
+          "id": "logs_total",
+          "type": "metric",
+          "title": "Total Logs",
+          "description": "Total log events in logs_menu_demo",
+          "config": {
+            "show_legends": false,
+            "legends_position": null,
+            "unit": "count",
+            "decimals": 0,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT count(_timestamp) as \"y_axis_1\" FROM \"logs_menu_demo\"",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "logs_menu_demo",
+                "stream_type": "logs",
+                "x": [],
+                "y": [
+                  {
+                    "label": "Total Logs",
+                    "alias": "y_axis_1",
+                    "column": "_timestamp",
+                    "color": "#3b82f6",
+                    "aggregationFunction": "count"
+                  }
+                ],
+                "z": [],
+                "breakdown": [],
+                "filter": {
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 0, "y": 0, "w": 12, "h": 8, "i": 1 },
+          "htmlContent": "",
+          "markdownContent": ""
+        },
+        {
+          "id": "logs_timeline",
+          "type": "line",
+          "title": "Logs Timeline",
+          "description": "Log volume over time",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "unit": "count",
+            "decimals": 0,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT histogram(_timestamp, '5 minutes') as \"x_axis_1\", count(_timestamp) as \"y_axis_1\" FROM \"logs_menu_demo\" GROUP BY x_axis_1 ORDER BY x_axis_1",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "logs_menu_demo",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "Time",
+                    "alias": "x_axis_1",
+                    "column": "_timestamp",
+                    "color": null,
+                    "aggregationFunction": "histogram",
+                    "sortBy": "ASC",
+                    "args": [ { "value": "5 minutes" } ]
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "Log Count",
+                    "alias": "y_axis_1",
+                    "column": "_timestamp",
+                    "color": "#8b5cf6",
+                    "aggregationFunction": "count"
+                  }
+                ],
+                "z": [],
+                "breakdown": [],
+                "filter": {
+                  "filterType": "group",
+                  "logicalOperator": "AND",
+                  "conditions": []
+                }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 12, "y": 0, "w": 36, "h": 8, "i": 2 },
+          "htmlContent": "",
+          "markdownContent": ""
+        },
+        {
+          "id": "logs_level_dist",
+          "type": "bar",
+          "title": "Log Level Distribution",
+          "description": "Count by level",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "unit": "count",
+            "decimals": 0,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT level as \"x_axis_1\", count(_timestamp) as \"y_axis_1\" FROM \"logs_menu_demo\" GROUP BY x_axis_1 ORDER BY y_axis_1 DESC",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "logs_menu_demo",
+                "stream_type": "logs",
+                "x": [
+                  { "label": "Level", "alias": "x_axis_1", "column": "level", "color": null }
+                ],
+                "y": [
+                  {
+                    "label": "Count",
+                    "alias": "y_axis_1",
+                    "column": "_timestamp",
+                    "color": "#10b981",
+                    "aggregationFunction": "count"
+                  }
+                ],
+                "z": [],
+                "breakdown": [],
+                "filter": { "filterType": "group", "logicalOperator": "AND", "conditions": [] }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 0, "y": 8, "w": 24, "h": 12, "i": 3 },
+          "htmlContent": "",
+          "markdownContent": ""
+        }
+      ]
+    },
+    {
+      "tabId": "metrics",
+      "name": "Metrics",
+      "panels": [
+        {
+          "id": "metrics_cpu_timeline",
+          "type": "line",
+          "title": "CPU Usage Over Time",
+          "description": "Average CPU usage",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "unit": "%",
+            "decimals": 2,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT histogram(_timestamp, '5 minutes') as \"x_axis_1\", avg(value) as \"y_axis_1\" FROM \"infra_metrics_demo\" WHERE metric = 'cpu_usage' GROUP BY x_axis_1 ORDER BY x_axis_1",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "infra_metrics_demo",
+                "stream_type": "metrics",
+                "x": [
+                  {
+                    "label": "Time",
+                    "alias": "x_axis_1",
+                    "column": "_timestamp",
+                    "color": null,
+                    "aggregationFunction": "histogram",
+                    "sortBy": "ASC",
+                    "args": [ { "value": "5 minutes" } ]
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "CPU Avg",
+                    "alias": "y_axis_1",
+                    "column": "value",
+                    "color": "#f97316",
+                    "aggregationFunction": "avg"
+                  }
+                ],
+                "z": [],
+                "breakdown": [],
+                "filter": { "filterType": "group", "logicalOperator": "AND", "conditions": [] }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 0, "y": 0, "w": 24, "h": 10, "i": 1 },
+          "htmlContent": "",
+          "markdownContent": ""
+        },
+        {
+          "id": "metrics_mem_timeline",
+          "type": "line",
+          "title": "Memory Usage Over Time",
+          "description": "Average memory usage",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "unit": "%",
+            "decimals": 2,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT histogram(_timestamp, '5 minutes') as \"x_axis_1\", avg(value) as \"y_axis_1\" FROM \"infra_metrics_demo\" WHERE metric = 'memory_usage' GROUP BY x_axis_1 ORDER BY x_axis_1",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "infra_metrics_demo",
+                "stream_type": "metrics",
+                "x": [
+                  {
+                    "label": "Time",
+                    "alias": "x_axis_1",
+                    "column": "_timestamp",
+                    "color": null,
+                    "aggregationFunction": "histogram",
+                    "sortBy": "ASC",
+                    "args": [ { "value": "5 minutes" } ]
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "Mem Avg",
+                    "alias": "y_axis_1",
+                    "column": "value",
+                    "color": "#22c55e",
+                    "aggregationFunction": "avg"
+                  }
+                ],
+                "z": [],
+                "breakdown": [],
+                "filter": { "filterType": "group", "logicalOperator": "AND", "conditions": [] }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 24, "y": 0, "w": 24, "h": 10, "i": 2 },
+          "htmlContent": "",
+          "markdownContent": ""
+        },
+        {
+          "id": "metrics_req_by_host",
+          "type": "bar",
+          "title": "Request Rate by Host",
+          "description": "Average request rate by host",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "unit": "req/s",
+            "decimals": 1,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT host as \"x_axis_1\", avg(value) as \"y_axis_1\" FROM \"infra_metrics_demo\" WHERE metric = 'request_rate' GROUP BY x_axis_1 ORDER BY y_axis_1 DESC",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "infra_metrics_demo",
+                "stream_type": "metrics",
+                "x": [
+                  { "label": "Host", "alias": "x_axis_1", "column": "host", "color": null }
+                ],
+                "y": [
+                  {
+                    "label": "Request Rate",
+                    "alias": "y_axis_1",
+                    "column": "value",
+                    "color": "#38bdf8",
+                    "aggregationFunction": "avg"
+                  }
+                ],
+                "z": [],
+                "breakdown": [],
+                "filter": { "filterType": "group", "logicalOperator": "AND", "conditions": [] }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 0, "y": 10, "w": 24, "h": 10, "i": 3 },
+          "htmlContent": "",
+          "markdownContent": ""
+        }
+      ]
+    },
+    {
+      "tabId": "pipelines",
+      "name": "Pipelines",
+      "panels": [
+        {
+          "id": "pipelines_status_count",
+          "type": "bar",
+          "title": "Pipeline Status Counts",
+          "description": "Counts by pipeline status",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "unit": "count",
+            "decimals": 0,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT status as \"x_axis_1\", count(_timestamp) as \"y_axis_1\" FROM \"pipeline_events_demo\" GROUP BY x_axis_1 ORDER BY y_axis_1 DESC",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "pipeline_events_demo",
+                "stream_type": "logs",
+                "x": [ { "label": "Status", "alias": "x_axis_1", "column": "status", "color": null } ],
+                "y": [ { "label": "Count", "alias": "y_axis_1", "column": "_timestamp", "color": "#a855f7", "aggregationFunction": "count" } ],
+                "z": [],
+                "breakdown": [],
+                "filter": { "filterType": "group", "logicalOperator": "AND", "conditions": [] }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 0, "y": 0, "w": 24, "h": 10, "i": 1 },
+          "htmlContent": "",
+          "markdownContent": ""
+        },
+        {
+          "id": "pipelines_duration_timeline",
+          "type": "line",
+          "title": "Pipeline Duration Trend",
+          "description": "Average pipeline duration over time",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "unit": "ms",
+            "decimals": 2,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT histogram(_timestamp, '5 minutes') as \"x_axis_1\", avg(duration_ms) as \"y_axis_1\" FROM \"pipeline_events_demo\" GROUP BY x_axis_1 ORDER BY x_axis_1",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "pipeline_events_demo",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "Time",
+                    "alias": "x_axis_1",
+                    "column": "_timestamp",
+                    "color": null,
+                    "aggregationFunction": "histogram",
+                    "sortBy": "ASC",
+                    "args": [ { "value": "5 minutes" } ]
+                  }
+                ],
+                "y": [ { "label": "Duration", "alias": "y_axis_1", "column": "duration_ms", "color": "#f43f5e", "aggregationFunction": "avg" } ],
+                "z": [],
+                "breakdown": [],
+                "filter": { "filterType": "group", "logicalOperator": "AND", "conditions": [] }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 24, "y": 0, "w": 24, "h": 10, "i": 2 },
+          "htmlContent": "",
+          "markdownContent": ""
+        }
+      ]
+    },
+    {
+      "tabId": "streams",
+      "name": "Streams",
+      "panels": [
+        {
+          "id": "streams_ingest_by_stream",
+          "type": "bar",
+          "title": "Average Ingest MB by Stream",
+          "description": "Avg ingest volume by stream",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "unit": "MB",
+            "decimals": 1,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT stream_name as \"x_axis_1\", avg(ingest_mb) as \"y_axis_1\" FROM \"stream_inventory_demo\" GROUP BY x_axis_1 ORDER BY y_axis_1 DESC",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "stream_inventory_demo",
+                "stream_type": "logs",
+                "x": [ { "label": "Stream", "alias": "x_axis_1", "column": "stream_name", "color": null } ],
+                "y": [ { "label": "Ingest MB", "alias": "y_axis_1", "column": "ingest_mb", "color": "#14b8a6", "aggregationFunction": "avg" } ],
+                "z": [],
+                "breakdown": [],
+                "filter": { "filterType": "group", "logicalOperator": "AND", "conditions": [] }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 0, "y": 0, "w": 24, "h": 10, "i": 1 },
+          "htmlContent": "",
+          "markdownContent": ""
+        },
+        {
+          "id": "streams_latency_by_tier",
+          "type": "bar",
+          "title": "Index Latency by Tier",
+          "description": "Average index latency by storage tier",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "unit": "ms",
+            "decimals": 1,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT tier as \"x_axis_1\", avg(index_latency_ms) as \"y_axis_1\" FROM \"stream_inventory_demo\" GROUP BY x_axis_1 ORDER BY y_axis_1 DESC",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "stream_inventory_demo",
+                "stream_type": "logs",
+                "x": [ { "label": "Tier", "alias": "x_axis_1", "column": "tier", "color": null } ],
+                "y": [ { "label": "Latency", "alias": "y_axis_1", "column": "index_latency_ms", "color": "#f59e0b", "aggregationFunction": "avg" } ],
+                "z": [],
+                "breakdown": [],
+                "filter": { "filterType": "group", "logicalOperator": "AND", "conditions": [] }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 24, "y": 0, "w": 24, "h": 10, "i": 2 },
+          "htmlContent": "",
+          "markdownContent": ""
+        }
+      ]
+    },
+    {
+      "tabId": "reports",
+      "name": "Reports",
+      "panels": [
+        {
+          "id": "reports_status_count",
+          "type": "bar",
+          "title": "Report Delivery Status",
+          "description": "Delivered/queued/failed reports",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "unit": "count",
+            "decimals": 0,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT status as \"x_axis_1\", count(_timestamp) as \"y_axis_1\" FROM \"report_runs_demo\" GROUP BY x_axis_1 ORDER BY y_axis_1 DESC",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "report_runs_demo",
+                "stream_type": "logs",
+                "x": [ { "label": "Status", "alias": "x_axis_1", "column": "status", "color": null } ],
+                "y": [ { "label": "Count", "alias": "y_axis_1", "column": "_timestamp", "color": "#6366f1", "aggregationFunction": "count" } ],
+                "z": [],
+                "breakdown": [],
+                "filter": { "filterType": "group", "logicalOperator": "AND", "conditions": [] }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 0, "y": 0, "w": 24, "h": 10, "i": 1 },
+          "htmlContent": "",
+          "markdownContent": ""
+        },
+        {
+          "id": "reports_duration_timeline",
+          "type": "line",
+          "title": "Report Duration Trend",
+          "description": "Average report duration over time",
+          "config": {
+            "show_legends": true,
+            "legends_position": null,
+            "unit": "s",
+            "decimals": 2,
+            "top_results_others": false,
+            "axis_border_show": false,
+            "drilldown": [],
+            "mark_line": [],
+            "connect_nulls": false,
+            "no_value_replacement": "",
+            "wrap_table_cells": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT histogram(_timestamp, '10 minutes') as \"x_axis_1\", avg(duration_sec) as \"y_axis_1\" FROM \"report_runs_demo\" GROUP BY x_axis_1 ORDER BY x_axis_1",
+              "vrlFunctionQuery": "",
+              "customQuery": false,
+              "fields": {
+                "stream": "report_runs_demo",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "Time",
+                    "alias": "x_axis_1",
+                    "column": "_timestamp",
+                    "color": null,
+                    "aggregationFunction": "histogram",
+                    "sortBy": "ASC",
+                    "args": [ { "value": "10 minutes" } ]
+                  }
+                ],
+                "y": [ { "label": "Duration", "alias": "y_axis_1", "column": "duration_sec", "color": "#ec4899", "aggregationFunction": "avg" } ],
+                "z": [],
+                "breakdown": [],
+                "filter": { "filterType": "group", "logicalOperator": "AND", "conditions": [] }
+              },
+              "config": {
+                "promql_legend": "",
+                "layer_type": "scatter",
+                "weight_fixed": 1,
+                "limit": 0,
+                "min": 0,
+                "max": 100
+              }
+            }
+          ],
+          "layout": { "x": 24, "y": 0, "w": 24, "h": 10, "i": 2 },
+          "htmlContent": "",
+          "markdownContent": ""
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "list": [],
+    "showDynamicFilters": true
+  },
+  "defaultDatetimeDuration": {
+    "type": "relative",
+    "relativeTimePeriod": "2h"
+  }
+}
