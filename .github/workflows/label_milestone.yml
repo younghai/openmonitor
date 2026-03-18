@@ -16,7 +16,7 @@ jobs:
   label_and_milestone:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       ## testing label should be added only when a PR is approved
       - name: add label to PR
